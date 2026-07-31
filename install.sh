@@ -351,11 +351,11 @@ install_eww() {
     local arch; arch="$(uname -m)"
     if [ "$arch" = "x86_64" ] && \
        curl -fsSL -o "$HOME/.local/bin/eww" \
-           "https://github.com/elkowar/eww/releases/latest/download/eww" 2>/dev/null; then
+           "https://github.com/grapes7000/desktop/releases/download/v0.1.0/eww-0.6.0-x86_64" 2>/dev/null; then
         chmod +x "$HOME/.local/bin/eww"
-        ok "installed eww from prebuilt release"
+        ok "installed eww from prebuilt binary"
     elif has cargo; then
-        warn "Prebuilt unavailable; building from source (this takes a few minutes)..."
+        warn "Prebuilt download failed; building from source (this takes a few minutes)..."
         local tmpdir; tmpdir="$(mktemp -d)"
         git clone --quiet --depth 1 --branch v0.6.0 https://github.com/elkowar/eww.git "$tmpdir/eww" &&
             cargo build --quiet --release --no-default-features --features=wayland \
@@ -364,7 +364,7 @@ install_eww() {
         rm -rf "$tmpdir"
         ok "built and installed eww"
     else
-        warn "Cannot install eww — no prebuilt for $arch and cargo not found"
+        warn "Cannot install eww — prebuilt download failed and cargo not found"
     fi
 }
 
