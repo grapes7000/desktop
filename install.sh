@@ -345,17 +345,27 @@ install_starship() {
 
 install_eww() {
     { has eww || [ -x "$HOME/.local/bin/eww" ]; } && { ok "eww"; return; }
-    has cargo || { warn "cargo not found; skipping eww build"; return; }
-    info "Building Eww v0.6.0 for Wayland (this takes a few minutes)..."
-    if "$DRY_RUN"; then printf '  would build eww\n'; return; fi
-    local tmpdir; tmpdir="$(mktemp -d)"
-    git clone --quiet --depth 1 --branch v0.6.0 https://github.com/elkowar/eww.git "$tmpdir/eww" &&
-        cargo build --quiet --release --no-default-features --features=wayland \
-            --manifest-path "$tmpdir/eww/Cargo.toml" || { rm -rf "$tmpdir"; die "Eww build failed"; }
+    info "Installing Eww"
+    if "$DRY_RUN"; then printf '  would install eww\n'; return; fi
     mkdir -p "$HOME/.local/bin"
-    install -m755 "$tmpdir/eww/target/release/eww" "$HOME/.local/bin/eww"
-    rm -rf "$tmpdir"
-    ok "installed eww to ~/.local/bin/eww"
+    local arch; arch="$(uname -m)"
+    if [ "$arch" = "x86_64" ] && \
+       curl -fsSL -o "$HOME/.local/bin/eww" \
+           "https://github.com/elkowar/eww/releases/latest/download/eww" 2>/dev/null; then
+        chmod +x "$HOME/.local/bin/eww"
+        ok "installed eww from prebuilt release"
+    elif has cargo; then
+        warn "Prebuilt unavailable; building from source (this takes a few minutes)..."
+        local tmpdir; tmpdir="$(mktemp -d)"
+        git clone --quiet --depth 1 --branch v0.6.0 https://github.com/elkowar/eww.git "$tmpdir/eww" &&
+            cargo build --quiet --release --no-default-features --features=wayland \
+                --manifest-path "$tmpdir/eww/Cargo.toml" || { rm -rf "$tmpdir"; die "Eww build failed"; }
+        install -m755 "$tmpdir/eww/target/release/eww" "$HOME/.local/bin/eww"
+        rm -rf "$tmpdir"
+        ok "built and installed eww"
+    else
+        warn "Cannot install eww — no prebuilt for $arch and cargo not found"
+    fi
 }
 
 # ── .gitconfig ─────────────────────────────────────────────────────────
