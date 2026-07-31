@@ -1,3 +1,2 @@
+# Flatpak apps — add your favorites here
 md.obsidian.Obsidian
-org.videolan.VLC
-org.libreoffice.LibreOffice

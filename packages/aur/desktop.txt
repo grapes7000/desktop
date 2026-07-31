@@ -1,3 +1,2 @@
-# AUR packages for this group (installed via yay).
+# AUR packages for Hyprland desktop
 eww
-dove

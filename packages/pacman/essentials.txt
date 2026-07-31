@@ -1,63 +1,38 @@
+# Terminal stack — polished CLI experience
 zsh
 kitty
 neovim
+starship
+ttf-jetbrains-mono-nerd
+
+# Search, navigation, file tools
 ripgrep
 fd
 bat
 fzf
 eza
 zoxide
-btop
 tree
-man-db
-man-pages
+jq
+yq
+
+# System monitoring
+btop
+htop
+
+# Dev basics
 python
 python-pip
 python-pipx
-python-packaging
-python-defusedxml
-ttf-jetbrains-mono-nerd
-flatpak
-restic
-chezmoi
-starship
+python-pillow
+man-db
+man-pages
 
-# Filesystem
-cryptsetup
-device-mapper
-dosfstools
-e2fsprogs
-exfatprogs
-f2fs-tools
-jfsutils
-lvm2
-mdadm
-dmraid
-mtools
-nilfs-utils
-xfsprogs
-nfs-utils
-fsarchiver
+# Archive
+unrar
+p7zip
 
-# Hardware
-dmidecode
-ethtool
-hwdetect
-hwinfo
-lsscsi
-sg3_utils
-sysfsutils
-usb_modeswitch
-usbutils
-realtime-privileges
-fwupd
-
-# Networking
-bind
-inetutils
-netctl
-xl2tpd
+# Pacman helpers
 reflector
 pacman-contrib
 pkgfile
-rebuild-detector

@@ -1,5 +1,52 @@
+# Hyprland + Wayland
+hyprland
+waybar
+wofi
+hyprpaper
+hyprlock
+hypridle
+xdg-desktop-portal-hyprland
 xdg-utils
 xdg-user-dirs
+qt5-wayland
+qt6-wayland
+
+# Screenshot, clipboard, controls
+grim
+slurp
 wl-clipboard
+brightnessctl
+playerctl
+pamixer
+wtype
+
+# Audio
+pipewire-alsa
+pipewire-pulse
+wireplumber
 pavucontrol
-python-pillow
+
+# Bluetooth
+bluez
+bluez-utils
+
+# Networking
+networkmanager
+networkmanager-openvpn
+tailscale
+ufw
+
+# Notifications
+dunst
+
+# Fonts
+noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+ttf-dejavu
+ttf-meslo-nerd
+
+# Graphics (Intel — comment out if AMD/Nvidia)
+mesa-utils
+vulkan-intel
+intel-media-driver

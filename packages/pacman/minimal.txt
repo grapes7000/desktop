@@ -1,3 +1,4 @@
+# Core system tools — the bare minimum to bootstrap everything else
 base
 base-devel
 ca-certificates
@@ -6,19 +7,11 @@ wget
 git
 rsync
 unzip
-unrar
 zip
 jq
 gnupg
 openssh
 sudo
 less
-diffutils
 which
-perl
-texinfo
-logrotate
-lsb-release
-bash-completion
-
 github-cli

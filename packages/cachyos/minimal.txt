@@ -1,26 +1,11 @@
-# CachyOS-only additions for this group.
-# Boot, kernel, firmware, and CachyOS infrastructure.
+# CachyOS kernel and firmware — skip on non-CachyOS
 linux-cachyos
 linux-cachyos-headers
-linux-cachyos-lts
-linux-cachyos-lts-headers
 linux-firmware
 intel-ucode
 sof-firmware
 alsa-firmware
-mkinitcpio
-limine
-limine-mkinitcpio-hook
-efibootmgr
-efitools
-os-prober
 cachyos-keyring
 cachyos-mirrorlist
-cachyos-v3-mirrorlist
-cachyos-v4-mirrorlist
 cachyos-settings
 cachyos-hooks
-cachyos-micro-settings
-cachyos-rate-mirrors
-cachy-update
-chwd
