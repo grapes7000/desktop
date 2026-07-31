@@ -1,0 +1,20 @@
+/* SAFE FALLBACK THEME
+ * Seeded by hyprland-setup when the separate themes repo has not generated one yet.
+ * The `theme <name>` command may replace this file later.
+ */
+@define-color bg #1e1e2e;
+@define-color bg_alt #181825;
+@define-color surface_0 #313244;
+@define-color text #cdd6f4;
+@define-color text_dim #a6adc8;
+@define-color accent #cba6f7;
+@define-color accent2 #89b4fa;
+@define-color urgent #f38ba8;
+@define-color focus #cba6f7;
+@define-color hover #45475a;
+@define-color selected #585b70;
+@define-color border_subtle #45475a;
+@define-color border_strong #6c7086;
+@define-color warning #f9e2af;
+@define-color success #a6e3a1;
+@define-color disabled #6c7086;

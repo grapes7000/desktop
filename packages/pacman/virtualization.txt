@@ -1,0 +1,3 @@
+libvirt
+dnsmasq
+edk2-ovmf

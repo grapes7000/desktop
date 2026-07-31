@@ -1,0 +1,12 @@
+ca-certificates
+curl
+wget
+git
+rsync
+unzip
+zip
+jq
+gnupg
+openssh-client
+
+gh

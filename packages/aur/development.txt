@@ -1,0 +1,2 @@
+# AUR packages for this group (installed via yay).
+github-desktop-bin

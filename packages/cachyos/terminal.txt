@@ -1,0 +1,17 @@
+# CachyOS-only additions for this group.
+alacritty
+direnv
+duf
+fastfetch
+glances
+micro
+nano
+nano-syntax-highlighting
+plocate
+pv
+thefuck
+tldr
+vim
+yazi
+shelly
+s-nail

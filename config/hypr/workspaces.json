@@ -1,0 +1,12 @@
+[
+  {"id": 1,  "name": "web",   "icon": ""},
+  {"id": 2,  "name": "term",  "icon": ""},
+  {"id": 3,  "name": "code",  "icon": ""},
+  {"id": 4,  "name": "files", "icon": ""},
+  {"id": 5,  "name": "media", "icon": ""},
+  {"id": 6,  "name": "chat",  "icon": ""},
+  {"id": 7,  "name": "doc",   "icon": ""},
+  {"id": 8,  "name": "sys",   "icon": ""},
+  {"id": 9,  "name": "extra", "icon": ""},
+  {"id": 10, "name": "vm",    "icon": ""}
+]

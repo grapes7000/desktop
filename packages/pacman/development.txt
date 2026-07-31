@@ -1,0 +1,7 @@
+github-cli
+shellcheck
+shfmt
+git-lfs
+make
+cmake
+pkgconf

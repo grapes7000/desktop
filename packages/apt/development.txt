@@ -1,0 +1,7 @@
+gh
+shellcheck
+shfmt
+git-lfs
+make
+cmake
+pkg-config

@@ -1,0 +1,3 @@
+# NOTE: vscodium is installed natively via pacman on this machine.
+# Uncomment only if using the Flatpak version instead.
+# com.vscodium.codium

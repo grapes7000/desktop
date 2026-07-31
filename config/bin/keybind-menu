@@ -1,0 +1,18 @@
+#!/bin/bash
+# Open generated keybind data in wofi for search.
+set -euo pipefail
+
+TSV="${XDG_CACHE_HOME:-$HOME/.cache}/hyprland-setup/keybinds.tsv"
+
+if [ ! -f "$TSV" ]; then
+    SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+    "$SCRIPT_DIR/generate-keybinds" 2>/dev/null || true
+fi
+
+if [ ! -f "$TSV" ]; then
+    notify-send "Keybind Menu" "No keybind data found. Run generate-keybinds first." 2>/dev/null
+    exit 1
+fi
+
+awk -F'\t' '{printf "%-24s  %s\n", $1, $2}' "$TSV" | \
+    ~/.local/bin/wofi-singleton --dmenu -p "󰌌 Keybinds" 2>/dev/null || true

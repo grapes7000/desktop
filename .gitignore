@@ -1,0 +1,20 @@
+# Generated at install time
+config/hypr/hyprpaper.conf
+config/hypr/generated/theme.conf
+config/waybar/generated/
+config/eww-waybar-panels/generated/theme.scss
+config/kitty/generated/
+config/nvim/lua/generated_theme.lua
+home/.gitconfig
+
+# Build artifacts
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# Theme studio unpacked
+themes/dist/
+
+# Local overrides
+defaults.local.env

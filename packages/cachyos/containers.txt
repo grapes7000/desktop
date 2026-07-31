@@ -1,0 +1,2 @@
+# CachyOS-only additions for this group.
+# Docker/docker-compose are in the pacman list.

@@ -1,0 +1,20 @@
+# CachyOS-only additions for this group.
+# Snapshot, boot animation, system tools.
+cachyos-snapper-support
+snapper
+limine-snapper-sync
+plymouth
+plymouth-kcm
+cachyos-plymouth-theme
+cachyos-plymouth-bootanimation
+btrfs-progs
+btrfs-assistant
+cachyos-hello
+cachyos-packageinstaller
+cachyos-kernel-manager
+oh-my-zsh-git
+zsh-autosuggestions
+zsh-syntax-highlighting
+nvm
+npm
+yay

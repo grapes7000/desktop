@@ -1,0 +1,36 @@
+#!/bin/bash
+# Apply the configured cursor theme to Hyprland + toolkit settings.
+# Reads $cursorTheme and $cursorSize from cursor.conf (via Hyprland env vars).
+set -euo pipefail
+
+THEME="${XCURSOR_THEME:-Bibata-Modern-Classic}"
+SIZE="${XCURSOR_SIZE:-24}"
+
+theme_exists() {
+    local name="$1"
+    for dir in \
+        "$HOME/.local/share/icons/$name" \
+        "$HOME/.icons/$name" \
+        "/usr/share/icons/$name"; do
+        [ -d "$dir/cursors" ] && return 0
+    done
+    command -v hyprcursor-util >/dev/null 2>&1 && return 0
+    return 1
+}
+
+if ! theme_exists "$THEME"; then
+    for fallback in Adwaita default; do
+        if theme_exists "$fallback"; then
+            printf 'apply-cursor: %s not found, falling back to %s\n' "$THEME" "$fallback" >&2
+            THEME="$fallback"
+            break
+        fi
+    done
+fi
+
+hyprctl setcursor "$THEME" "$SIZE" 2>/dev/null || true
+
+if command -v gsettings >/dev/null 2>&1; then
+    gsettings set org.gnome.desktop.interface cursor-theme "$THEME" 2>/dev/null || true
+    gsettings set org.gnome.desktop.interface cursor-size "$SIZE" 2>/dev/null || true
+fi

@@ -1,0 +1,7 @@
+# CachyOS-only additions for this group.
+haruna
+vlc-plugins-all
+poppler-glib
+libgsf
+libopenraw
+tesseract-data-eng

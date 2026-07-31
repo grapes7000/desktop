@@ -1,0 +1,2 @@
+# CachyOS-only additions for this group.
+# spice-vdagent and qemu-guest-agent are in the pacman list.

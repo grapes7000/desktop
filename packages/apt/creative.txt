@@ -1,0 +1,2 @@
+libinput-tools
+xserver-xorg-input-wacom

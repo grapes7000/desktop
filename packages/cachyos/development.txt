@@ -1,0 +1,7 @@
+# CachyOS-only additions for this group.
+lazygit
+vscodium
+claude-code
+claude-desktop
+openai-codex
+opencode

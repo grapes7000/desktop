@@ -1,0 +1,46 @@
+#!/bin/bash
+# Notification center menu using dunstctl + wofi.
+set -euo pipefail
+
+if ! command -v dunstctl >/dev/null 2>&1; then
+    notify-send "Notification Center" "dunst is not running" 2>/dev/null || true
+    exit 1
+fi
+
+paused=$(dunstctl is-paused 2>/dev/null || echo "unknown")
+if [ "$paused" = "true" ]; then
+    pause_label="▶ Resume notifications"
+else
+    pause_label="⏸ Pause notifications"
+fi
+
+history_count=$(dunstctl count history 2>/dev/null || echo "0")
+
+options="📋 View latest notification
+🔁 Recall from history ($history_count)
+$pause_label
+✖ Close visible notifications
+🗑 Clear notification history"
+
+selected=$(printf '%s\n' "$options" | ~/.local/bin/wofi-singleton --dmenu -p "󰂚 Notifications" 2>/dev/null) || exit 0
+
+case "$selected" in
+    "📋 View latest notification")
+        dunstctl history-pop ;;
+    "🔁 Recall from history"*)
+        dunstctl history-pop ;;
+    *"Resume notifications")
+        dunstctl set-paused false ;;
+    *"Pause notifications")
+        dunstctl set-paused true ;;
+    "✖ Close visible notifications")
+        dunstctl close-all ;;
+    "🗑 Clear notification history")
+        # dunstctl doesn't have a clear-history command; close-all + cycling
+        dunstctl close-all
+        for _ in $(seq 1 "${history_count:-0}"); do
+            dunstctl history-pop 2>/dev/null
+            dunstctl close 2>/dev/null
+        done
+        ;;
+esac

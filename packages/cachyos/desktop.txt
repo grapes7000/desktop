@@ -1,0 +1,120 @@
+# CachyOS-only additions for this group.
+# KDE Plasma, display manager, theming, audio, bluetooth, networking.
+
+# KDE Plasma
+plasma-desktop
+plasma-login-manager
+plasma-nm
+plasma-pa
+plasma-firewall
+plasma-systemmonitor
+plasma-thunderbolt
+plasma-browser-integration
+powerdevil
+power-profiles-daemon
+kwallet-pam
+kwalletmanager
+kde-gtk-config
+kdeconnect
+kdeplasma-addons
+kdegraphics-thumbnailers
+ffmpegthumbs
+ffmpegthumbnailer
+kscreen
+kinfocenter
+kio-admin
+kdialog
+accountsservice
+
+# KDE apps
+konsole
+kate
+dolphin
+gwenview
+spectacle
+ark
+filelight
+kcalc
+partitionmanager
+meld
+
+# KDE themes
+cachyos-kde-settings
+cachyos-emerald-kde-theme-git
+cachyos-iridescent-kde
+cachyos-nord-kde-theme-git
+cachyos-wallpapers
+breeze-gtk
+char-white
+phonon-qt6-vlc
+
+# Hyprland / Wayland
+hyprland
+waybar
+wofi
+hyprpaper
+hyprlock
+hypridle
+xdg-desktop-portal-hyprland
+qt5-wayland
+qt6-wayland
+grim
+slurp
+brightnessctl
+playerctl
+pamixer
+rofi-rbw
+wtype
+xsettingsd
+
+# Audio
+pipewire-alsa
+pipewire-pulse
+wireplumber
+gst-libav
+gst-plugin-pipewire
+gst-plugin-va
+gst-plugins-bad
+gst-plugins-ugly
+libdvdcss
+
+# Bluetooth
+bluez
+bluez-utils
+bluez-libs
+bluez-obex
+bluez-hid2hci
+bluedevil
+
+# Networking
+networkmanager
+networkmanager-openvpn
+modemmanager
+iwd
+wpa_supplicant
+nss-mdns
+tailscale
+ufw
+ufw-extras
+
+# Fonts
+noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+ttf-dejavu
+ttf-liberation
+ttf-meslo-nerd
+ttf-opensans
+ttf-bitstream-vera
+cantarell-fonts
+awesome-terminal-fonts
+
+# Graphics
+mesa-utils
+vulkan-intel
+intel-media-driver
+opencl-mesa
+lib32-mesa
+lib32-opencl-mesa
+lib32-vulkan-intel
+vpl-gpu-rt

@@ -1,0 +1,2 @@
+org.signal.Signal
+org.localsend.localsend_app

@@ -1,0 +1,3 @@
+org.kde.krita
+org.blender.Blender
+org.gimp.GIMP

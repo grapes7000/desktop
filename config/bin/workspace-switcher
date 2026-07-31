@@ -1,0 +1,42 @@
+#!/bin/bash
+# Quick workspace switcher using wofi with workspace names, icons, and state.
+set -euo pipefail
+
+WS_JSON="${WS_JSON:-$HOME/.config/hypr/workspaces.json}"
+HYPRCTL="${HYPRCTL_BIN:-hyprctl}"
+
+if [ ! -r "$WS_JSON" ]; then
+    selected=$(seq 1 10 | ~/.local/bin/wofi-singleton --dmenu -p "󰣇 Go to workspace:" 2>/dev/null)
+    [ -n "$selected" ] && $HYPRCTL dispatch workspace "$selected"
+    exit 0
+fi
+
+active=$($HYPRCTL activeworkspace -j 2>/dev/null | jq -r '.id // 1' 2>/dev/null) || active=1
+clients=$($HYPRCTL clients -j 2>/dev/null) || clients='[]'
+
+entries=""
+while IFS= read -r line; do
+    ws_id=$(printf '%s' "$line" | jq -r '.id')
+    ws_name=$(printf '%s' "$line" | jq -r '.name')
+    ws_icon=$(printf '%s' "$line" | jq -r '.icon')
+
+    win_count=$(printf '%s' "$clients" | jq --argjson id "$ws_id" '[.[] | select(.workspace.id == $id)] | length' 2>/dev/null) || win_count=0
+
+    if [ "$ws_id" = "$active" ]; then
+        state="active"
+    elif [ "$win_count" -gt 0 ]; then
+        state="${win_count} window$([ "$win_count" -ne 1 ] && echo s)"
+    else
+        state="empty"
+    fi
+
+    entry=$(printf '%s  %2d  %-10s %s' "$ws_icon" "$ws_id" "$ws_name" "$state")
+    entries="${entries}${entry}\n"
+done < <(jq -c '.[]' "$WS_JSON")
+
+selected=$(printf '%b' "$entries" | ~/.local/bin/wofi-singleton --dmenu -p "󰣇 Go to workspace:" 2>/dev/null) || exit 0
+
+ws_num=$(printf '%s' "$selected" | awk '{print $2}')
+if [ -n "$ws_num" ] && [ "$ws_num" -ge 1 ] 2>/dev/null && [ "$ws_num" -le 10 ] 2>/dev/null; then
+    $HYPRCTL dispatch workspace "$ws_num"
+fi

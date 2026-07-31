@@ -1,0 +1,382 @@
+@import "generated/theme.scss";
+
+// Derived tokens — three surface levels
+$bar-bg: $bg-alt;
+$card-bg: $surface-0;
+$card-raised: lighten($surface-0, 5%);
+$accent-dim: rgba($accent, 0.50);
+$accent-glow: rgba($accent, 0.10);
+$hl: rgba(255, 255, 255, 0.04);
+$hl-strong: rgba(255, 255, 255, 0.07);
+
+* { all: unset; font-family: "JetBrainsMono Nerd Font", "Symbols Nerd Font", monospace; }
+
+// Panel backdrop (bar-level — darkest surface)
+.system-panel {
+  background-color: $bar-bg;
+  background-image: linear-gradient(180deg, rgba(255,255,255,0.018) 0%, transparent 35%, rgba(0,0,0,0.04) 100%);
+  border: 1px solid $border-subtle;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: inset 0 1px 0 $hl, 0 12px 40px rgba(0,0,0,0.55);
+}
+.panel {
+  background-color: $bar-bg;
+  background-image: linear-gradient(180deg, rgba(255,255,255,0.018) 0%, transparent 35%, rgba(0,0,0,0.04) 100%);
+  border: 1px solid $border-subtle;
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: inset 0 1px 0 $hl, 0 12px 40px rgba(0,0,0,0.55);
+}
+
+.panel-header { margin-bottom: 12px; }
+.panel-title { color: $text-dim; font-size: 10px; font-weight: 900; letter-spacing: 1px; }
+.panel-line { color: $text-dim; font-size: 13px; margin-top: 6px; }
+
+// Clock
+.clock-time { color: $accent; font-size: 36px; font-weight: 900; }
+.clock-divider { background-color: rgba($accent, 0.25); min-height: 1px; margin: 10px 40px; }
+.calendar { color: $text; font-size: 15px; margin: 12px 0; }
+
+// Circular meters (new shape variety)
+.meter-row { margin: 12px 0 8px; }
+.resource-meter { padding: 8px; }
+.meter-ring {
+  color: $accent-dim;
+  background-color: rgba($text, 0.06);
+  min-width: 90px;
+  min-height: 90px;
+}
+.resource-meter.warning .meter-ring { color: $warning; }
+.resource-meter.critical .meter-ring { color: $urgent; }
+.meter-value { color: $text; font-size: 16px; font-weight: 800; }
+.meter-icon { color: $text-dim; font-size: 12px; margin-top: 2px; }
+.meter-label { color: $text-dim; font-size: 9px; font-weight: 900; margin-top: 6px; letter-spacing: 1px; }
+.meter-detail { color: $text-dim; font-size: 9px; margin-top: 2px; }
+
+// Stat pills (compact pill shape)
+.pill-row { margin: 8px 0 12px; }
+.stat-pill {
+  background-color: $card-bg;
+  border: 1px solid $border-subtle;
+  border-radius: 999px;
+  padding: 5px 14px;
+  margin-right: 8px;
+  box-shadow: inset 0 1px 0 $hl;
+}
+.stat-pill-icon { color: $accent-dim; font-size: 13px; margin-right: 6px; }
+.stat-pill-text { color: $text; font-size: 11px; }
+
+// Normal cards (card-level — middle surface)
+.resource-card {
+  background-color: $card-bg;
+  border: 1px solid $border-subtle;
+  border-radius: 10px;
+  padding: 12px;
+  min-width: 210px;
+  margin-right: 10px;
+  box-shadow: inset 0 1px 0 $hl;
+}
+.resource-grid { min-width: 440px; margin-bottom: 8px; }
+.resource-icon { color: $accent-dim; font-size: 15px; margin-right: 6px; }
+.resource-label, .resource-detail { color: $text-dim; font-size: 10px; }
+.resource-value { color: $text; font-size: 14px; font-weight: 800; }
+.resource-progress {
+  color: $accent-dim;
+  background-color: rgba($text, 0.06);
+  min-height: 4px;
+  margin: 8px 0 6px;
+  border-radius: 2px;
+}
+.resource-card.warning .resource-progress { color: $warning; }
+.resource-card.critical .resource-progress { color: $urgent; }
+
+// Process section
+.process-section {
+  background-color: $card-bg;
+  border: 1px solid $border-subtle;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  box-shadow: inset 0 1px 0 $hl;
+}
+.section-title { color: $text-dim; font-size: 9px; font-weight: 900; margin-bottom: 6px; letter-spacing: 1px; }
+.process-row { min-height: 22px; }
+.process-name { color: $text; font-size: 11px; }
+.process-value { color: $text-dim; font-size: 10px; margin-left: 10px; }
+
+// App grid
+.apps-grid { margin-top: 8px; }
+.app-cell {
+  background-color: $card-bg;
+  border: 1px solid $border-subtle;
+  border-radius: 12px;
+  padding: 10px;
+  margin: 4px;
+  min-width: 64px;
+  min-height: 64px;
+  box-shadow: inset 0 1px 0 $hl;
+}
+.app-cell:hover {
+  background-color: $card-raised;
+  border-color: $border-strong;
+  box-shadow: inset 0 1px 0 $hl-strong;
+}
+.app-cell-active {
+  background-color: $card-raised;
+  background-image: linear-gradient(135deg, $accent-glow, transparent 60%);
+  border-color: $accent;
+  box-shadow: inset 0 1px 0 rgba($accent, 0.12);
+}
+.app-icon { border-radius: 10px; min-width: 48px; min-height: 48px; }
+.app-glyph-box {
+  background-color: rgba($text, 0.06);
+  border: 1px solid $border-subtle;
+  border-radius: 10px;
+  min-width: 48px;
+  min-height: 48px;
+  box-shadow: inset 0 1px 0 $hl;
+}
+.app-glyph { color: $accent-dim; font-size: 24px; }
+.app-cell-name { color: $text-dim; font-size: 10px; margin-top: 6px; }
+.app-ws-badge {
+  color: $bg;
+  background-color: $accent;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 8px;
+  font-weight: 900;
+  margin: 2px;
+}
+
+// Network panel cards
+.net-card {
+  background-color: $card-bg;
+  border: 1px solid $border-subtle;
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 10px;
+  box-shadow: inset 0 1px 0 $hl;
+}
+.net-dim { opacity: 0.40; }
+.net-card-icon { color: $accent-dim; font-size: 22px; margin-right: 12px; }
+.net-dim .net-card-icon { color: $text-dim; }
+.net-card-title { color: $text; font-size: 13px; font-weight: 800; }
+.net-card-sub { color: $text-dim; font-size: 10px; margin-top: 2px; }
+.net-signal-ring {
+  color: $accent;
+  background-color: rgba($text, 0.06);
+  min-width: 42px;
+  min-height: 42px;
+}
+.net-signal-val { color: $text; font-size: 10px; font-weight: 800; }
+.net-transfer {
+  background-color: rgba($text, 0.04);
+  border: 1px solid $border-subtle;
+  border-radius: 999px;
+  padding: 4px 12px;
+  margin-top: 8px;
+}
+.net-transfer-item { color: $text-dim; font-size: 10px; }
+
+// Mullvad active (raised card with accent gradient)
+.net-mullvad-on {
+  background-color: $card-raised;
+  background-image: linear-gradient(135deg, rgba($success, 0.08), transparent 60%);
+  border-color: $success;
+  box-shadow: inset 0 1px 0 rgba($success, 0.12);
+}
+.net-mullvad-off { opacity: 0.50; }
+.net-mullvad-on .net-card-icon { color: $success; }
+.net-status-pill {
+  font-size: 8px;
+  font-weight: 900;
+  border-radius: 999px;
+  padding: 3px 10px;
+  letter-spacing: 0.5px;
+}
+.net-pill-on { color: $bg; background-color: $success; }
+.net-pill-off { color: $text-dim; background-color: rgba($text, 0.06); }
+
+// Audio panel
+.audio-mute-btn {
+  color: $text;
+  font-size: 20px;
+  min-width: 36px;
+  min-height: 36px;
+  margin-right: 8px;
+  border-radius: 8px;
+}
+.audio-mute-btn:hover { color: $accent; }
+.audio-slider {
+  margin: 0 4px;
+  trough {
+    background-color: rgba($text, 0.06);
+    border: 1px solid $border-subtle;
+    border-radius: 4px;
+    min-height: 6px;
+  }
+  highlight {
+    background-color: $accent;
+    border-radius: 4px;
+    min-height: 6px;
+  }
+  slider {
+    background-color: $text;
+    border-radius: 999px;
+    min-width: 14px;
+    min-height: 14px;
+    margin: -4px 0;
+  }
+}
+.audio-vol-label { color: $text-dim; font-size: 11px; min-width: 36px; }
+.audio-section {
+  background-color: $card-bg;
+  border: 1px solid $border-subtle;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-top: 10px;
+  box-shadow: inset 0 1px 0 $hl;
+}
+.audio-section-title { color: $text-dim; font-size: 9px; font-weight: 900; margin-bottom: 6px; letter-spacing: 1px; }
+.audio-app-row { margin-bottom: 4px; }
+.audio-app-name { color: $text; font-size: 10px; min-width: 90px; }
+.audio-app-slider {
+  margin: 0 6px;
+  trough {
+    background-color: rgba($text, 0.06);
+    border-radius: 3px;
+    min-height: 4px;
+  }
+  highlight {
+    background-color: $accent2;
+    border-radius: 3px;
+    min-height: 4px;
+  }
+  slider {
+    background-color: $text;
+    border-radius: 999px;
+    min-width: 10px;
+    min-height: 10px;
+    margin: -3px 0;
+  }
+}
+.audio-app-vol { color: $text-dim; font-size: 9px; min-width: 32px; }
+
+// Cava visualizer
+.cava-box { padding: 0 2px; opacity: 0.18; min-height: 180px; }
+.cava-bar { margin: 0 1px; min-width: 8px; }
+.cava-bar-fill {
+  background-color: $accent;
+  border-radius: 0 0 3px 3px;
+  min-width: 8px;
+  min-height: 2px;
+}
+
+// Media card
+.audio-media-card {
+  background-color: $card-bg;
+  border: 1px solid $border-subtle;
+  border-radius: 10px;
+  padding: 0;
+  margin-top: 10px;
+  min-height: 180px;
+  box-shadow: inset 0 1px 0 $hl;
+}
+.audio-media-content { padding: 10px 12px; }
+.audio-media-art {
+  border-radius: 8px;
+  margin-right: 10px;
+  min-width: 56px;
+  min-height: 56px;
+}
+.audio-media-art-fallback {
+  background-color: rgba($text, 0.06);
+  border: 1px solid $border-subtle;
+  border-radius: 8px;
+  margin-right: 10px;
+  min-width: 56px;
+  min-height: 56px;
+  box-shadow: inset 0 1px 0 $hl;
+}
+.audio-media-art-icon { color: $accent-dim; font-size: 24px; }
+.audio-media-status { color: $accent-dim; font-size: 8px; font-weight: 900; margin-bottom: 2px; letter-spacing: 0.5px; }
+.audio-media-title { color: $text; font-size: 13px; font-weight: 800; }
+.audio-media-artist { color: $text-dim; font-size: 10px; margin-top: 2px; }
+.audio-scrubber-row { margin-top: 8px; }
+.audio-media-time { color: $text-dim; font-size: 8px; margin: 0 4px; }
+.audio-scrubber {
+  background-color: rgba($text, 0.06);
+  border-radius: 3px;
+  min-height: 3px;
+  margin: 0 2px;
+  trough { background-color: rgba($text, 0.06); border-radius: 3px; min-height: 3px; }
+  progress { background-color: $accent; border-radius: 3px; min-height: 3px; }
+}
+.audio-media-controls { margin-top: 8px; }
+.audio-ctrl {
+  color: $text;
+  background-color: rgba($text, 0.04);
+  border: 1px solid $border-subtle;
+  border-radius: 999px;
+  min-width: 30px;
+  min-height: 30px;
+  font-size: 14px;
+  box-shadow: inset 0 1px 0 $hl;
+}
+.audio-ctrl:hover { color: $bg; background-color: $accent2; border-color: $accent2; }
+.audio-ctrl-primary {
+  color: $bg;
+  background-color: $accent;
+  border-color: $accent;
+  min-width: 36px;
+  min-height: 36px;
+  font-size: 16px;
+}
+.audio-mic-header {
+  background-color: $card-bg;
+  border: 1px solid $border-subtle;
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-top: 10px;
+  box-shadow: inset 0 1px 0 $hl;
+}
+.audio-mic-header:hover { background-color: $card-raised; }
+.audio-mic-icon { color: $accent2; font-size: 14px; margin-right: 8px; }
+.audio-mic-chevron { color: $text-dim; font-size: 11px; }
+.audio-mic-body { padding: 8px 4px 0; }
+
+// Action buttons
+.panel-actions { margin-top: 10px; }
+.panel-button {
+  color: $text-dim;
+  background-color: rgba($text, 0.04);
+  border: 1px solid $border-subtle;
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin-right: 6px;
+  font-size: 11px;
+  box-shadow: inset 0 1px 0 $hl;
+}
+.panel-button label { color: $text-dim; }
+.panel-button:hover { color: $bg; background-color: $accent; border-color: $accent; }
+.panel-button:hover label { color: $bg; }
+.close-button:hover { background-color: $urgent; border-color: $urgent; }
+
+// === Transitions & Animation ===
+.panel, .system-panel { transition: opacity 200ms ease-out; }
+.panel-button { transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease; }
+.panel-button label { transition: color 150ms ease; }
+.audio-ctrl { transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease; }
+.audio-mute-btn { transition: color 150ms ease; }
+.app-cell { transition: background-color 150ms ease, border-color 150ms ease; }
+.net-card { transition: opacity 200ms ease, background-color 200ms ease, border-color 200ms ease; }
+.audio-mic-header { transition: background-color 150ms ease; }
+.meter-ring { transition: color 300ms ease; }
+.cava-bar-fill { transition: min-height 150ms ease; }
+.audio-slider highlight { transition: min-width 250ms ease; }
+.audio-app-slider highlight { transition: min-width 250ms ease; }
+.audio-media-art { transition: min-width 200ms ease, min-height 200ms ease; }
+.audio-media-art-expanded { min-width: 96px; min-height: 96px; }
+.pulse-bright { opacity: 1.0; transition: opacity 750ms ease-in-out; }
+.pulse-dim { opacity: 0.6; transition: opacity 750ms ease-in-out; }

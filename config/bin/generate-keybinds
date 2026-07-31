@@ -1,0 +1,176 @@
+#!/usr/bin/env python3
+"""Parse Hyprland keybinds.conf and generate documentation + search data.
+
+Outputs:
+  docs/KEYBINDS.md            — Git-tracked Markdown reference
+  ~/.cache/hyprland-setup/keybinds.tsv  — searchable menu data
+"""
+import os
+import re
+import sys
+
+KEYBINDS_CONF = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..", "hypr", "conf", "keybinds.conf"
+)
+DOCS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "docs")
+CACHE_DIR = os.path.join(
+    os.environ.get("XDG_CACHE_HOME", os.path.expanduser("~/.cache")),
+    "hyprland-setup",
+)
+
+BIND_RE = re.compile(
+    r"^(bind[lme]*)\s*=\s*(.+)$"
+)
+
+FRIENDLY_KEYS = {
+    "Return": "Enter", "Space": "Space", "Print": "PrtSc",
+    "slash": "/", "period": ".", "comma": ",", "minus": "-",
+    "equal": "=", "bracketleft": "[", "bracketright": "]",
+    "mouse:272": "LMB", "mouse:273": "RMB",
+    "mouse_down": "ScrollDown", "mouse_up": "ScrollUp",
+}
+
+FRIENDLY_DISPATCHERS = {
+    "exec": "Run", "killactive": "Close window", "exit": "Exit Hyprland",
+    "fullscreen": "Fullscreen", "togglefloating": "Toggle float",
+    "layoutmsg": "Layout", "pseudo": "Pseudo-tile",
+    "movefocus": "Focus", "movewindow": "Move window",
+    "resizeactive": "Resize", "workspace": "Go to workspace",
+    "movetoworkspace": "Move to workspace",
+    "togglespecialworkspace": "Toggle special workspace",
+    "togglegroup": "Toggle group", "changegroupactive": "Switch tab",
+    "lockactivegroup": "Lock group",
+    "movewindow": "Move window", "resizewindow": "Resize window",
+}
+
+MOD_LABELS = {
+    "$mod": "Super", "SUPER": "Super", "SHIFT": "Shift",
+    "CTRL": "Ctrl", "ALT": "Alt",
+}
+
+
+def parse_keybinds(path):
+    entries = []
+    section = "General"
+    variables = {}
+    seen_keys = {}
+    duplicates = []
+
+    with open(path) as f:
+        for line in f:
+            stripped = line.strip()
+            if stripped.startswith("$") and "=" in stripped:
+                name, _, val = stripped.partition("=")
+                variables[name.strip()] = val.strip()
+                continue
+            if stripped.startswith("# ---") or stripped.startswith("# ───"):
+                section = stripped.lstrip("# ─-").strip().rstrip(" -─")
+                continue
+            if stripped.startswith("submap"):
+                continue
+            m = BIND_RE.match(stripped)
+            if not m:
+                continue
+            bind_type = m.group(1)
+            rest = m.group(2)
+            parts = rest.split(",", 3)
+            if len(parts) < 3:
+                continue
+            mods_raw = parts[0].strip()
+            key_raw = parts[1].strip()
+            dispatcher = parts[2].strip()
+            args = parts[3].strip() if len(parts) > 3 else ""
+
+            mods = []
+            for mod_part in mods_raw.split():
+                mods.append(MOD_LABELS.get(mod_part, mod_part))
+            for var, val in variables.items():
+                key_raw = key_raw.replace(var, val)
+                args = args.replace(var, val)
+
+            key_label = FRIENDLY_KEYS.get(key_raw, key_raw)
+            shortcut = "+".join(mods + [key_label]) if mods else key_label
+
+            desc = FRIENDLY_DISPATCHERS.get(dispatcher, dispatcher)
+            if args:
+                desc = f"{desc}: {args}"
+
+            sig = shortcut.lower()
+            if sig in seen_keys:
+                duplicates.append((shortcut, desc, seen_keys[sig]))
+            else:
+                seen_keys[sig] = desc
+
+            entries.append({
+                "section": section,
+                "bind_type": bind_type,
+                "shortcut": shortcut,
+                "description": desc,
+            })
+
+    return entries, duplicates
+
+
+def generate_markdown(entries, duplicates, output_path):
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    lines = ["# Keybind Reference", "", "*Auto-generated from `hypr/conf/keybinds.conf`.*", ""]
+
+    if duplicates:
+        lines.append("## Duplicate shortcuts")
+        lines.append("")
+        for shortcut, desc1, desc2 in duplicates:
+            lines.append(f"- `{shortcut}`: \"{desc1}\" / \"{desc2}\"")
+        lines.append("")
+
+    current_section = None
+    for e in entries:
+        if e["section"] != current_section:
+            current_section = e["section"]
+            lines.append(f"## {current_section}")
+            lines.append("")
+            lines.append("| Shortcut | Action |")
+            lines.append("|----------|--------|")
+        lines.append(f"| `{e['shortcut']}` | {e['description']} |")
+
+    lines.append("")
+    with open(output_path, "w") as f:
+        f.write("\n".join(lines))
+
+
+def generate_tsv(entries, output_path):
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "w") as f:
+        for e in entries:
+            f.write(f"{e['shortcut']}\t{e['description']}\t{e['section']}\n")
+
+
+def main():
+    conf_path = KEYBINDS_CONF
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "--check":
+            md_path = os.path.join(DOCS_DIR, "KEYBINDS.md")
+            if not os.path.exists(md_path):
+                print("KEYBINDS.md does not exist", file=sys.stderr)
+                sys.exit(1)
+            entries, _ = parse_keybinds(conf_path)
+            generate_markdown(entries, [], "/dev/stdout")
+            return
+        conf_path = sys.argv[1]
+
+    entries, duplicates = parse_keybinds(conf_path)
+
+    if duplicates:
+        for shortcut, desc1, desc2 in duplicates:
+            print(f"WARNING: duplicate shortcut {shortcut}: '{desc1}' / '{desc2}'",
+                  file=sys.stderr)
+
+    md_path = os.path.join(DOCS_DIR, "KEYBINDS.md")
+    tsv_path = os.path.join(CACHE_DIR, "keybinds.tsv")
+    generate_markdown(entries, duplicates, md_path)
+    generate_tsv(entries, tsv_path)
+    print(f"Generated {md_path} ({len(entries)} bindings)")
+    print(f"Generated {tsv_path}")
+
+
+if __name__ == "__main__":
+    main()

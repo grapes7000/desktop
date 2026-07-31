@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+panel="${1:-}"
+action="${2:-}"
+config_dir="$(realpath -m "${EWW_PANEL_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/eww-waybar-panels}")"
+if [ -n "${XDG_RUNTIME_DIR:-}" ] && [ -d "$XDG_RUNTIME_DIR" ]; then
+    runtime_dir="$XDG_RUNTIME_DIR"
+else
+    runtime_dir="${XDG_STATE_HOME:-$HOME/.local/state}/waybar-panels"
+    mkdir -p -m 700 "$runtime_dir"
+    chmod 700 "$runtime_dir"
+fi
+helper_dir="${XDG_CONFIG_HOME:-$HOME/.config}/bin"
+pidfile="$runtime_dir/waybar-panels-eww.pid"
+watcher_pidfile="$runtime_dir/waybar-panels-theme-watch.pid"
+logfile="$runtime_dir/waybar-panels-eww.log"
+theme_css="${XDG_CONFIG_HOME:-$HOME/.config}/waybar/generated/theme.css"
+
+notify_error() {
+    command -v notify-send >/dev/null 2>&1 && notify-send "Waybar System Monitor" "$1" -u critical || true
+    printf '%s\n' "$1" >&2
+}
+
+cmdline_matches_config() {
+    local pid="$1" command
+    [ -r "/proc/$pid/cmdline" ] || return 1
+    command="$(tr '\0' ' ' < "/proc/$pid/cmdline")"
+    [[ "$command" == *"eww"* && "$command" == *"daemon"* && "$command" == *"$config_dir"* ]]
+}
+
+daemon_running() {
+    local pid
+    [ -r "$pidfile" ] || return 1
+    pid="$(<"$pidfile")"
+    [[ "$pid" =~ ^[2-9][0-9]*$ ]] && cmdline_matches_config "$pid"
+}
+
+find_daemon_pid() {
+    local pid
+    while read -r pid; do
+        cmdline_matches_config "$pid" && { printf '%s\n' "$pid"; return 0; }
+    done < <(pgrep -f 'eww .*daemon' 2>/dev/null || true)
+    return 1
+}
+
+ensure_theme() {
+    python3 "$config_dir/scripts/generate-theme.py" "$theme_css" "$config_dir/generated/theme.scss"
+}
+
+start_theme_watcher() {
+    local pid
+    if [ -r "$watcher_pidfile" ]; then
+        pid="$(<"$watcher_pidfile")"
+        if [[ "$pid" =~ ^[2-9][0-9]*$ ]] && [ -r "/proc/$pid/cmdline" ] && tr '\0' ' ' < "/proc/$pid/cmdline" | grep -Fq "$config_dir/scripts/theme-watch.py"; then
+            return 0
+        fi
+    fi
+    python3 "$config_dir/scripts/theme-watch.py" "$config_dir" "$theme_css" >>"$logfile" 2>&1 &
+    printf '%s\n' "$!" > "$watcher_pidfile"
+}
+
+start_daemon() {
+    daemon_running && return 0
+    command -v eww >/dev/null 2>&1 || { notify_error "eww is unavailable"; return 1; }
+    [ -f "$config_dir/eww.yuck" ] || { notify_error "panel config not found: $config_dir"; return 1; }
+    ensure_theme
+    PATH="$helper_dir:$PATH" EWW_CONFIG_DIR="$config_dir" eww daemon --force-wayland --no-daemonize --config "$config_dir" >>"$logfile" 2>&1 &
+    local pid=$!
+    printf '%s\n' "$pid" > "$pidfile"
+    for _ in {1..30}; do
+        if eww ping --config "$config_dir" >/dev/null 2>&1; then
+            find_daemon_pid > "$pidfile" || true
+            start_theme_watcher
+            return 0
+        fi
+        sleep 0.1
+    done
+    cmdline_matches_config "$pid" && kill "$pid" || true
+    rm -f "$pidfile"
+    notify_error "Eww daemon did not start; see $logfile"
+    return 1
+}
+
+close_all() {
+    eww update show-system=false show-audio=false show-network=false show-clock=false show-apps=false --config "$config_dir" >/dev/null 2>&1 || true
+    if eww active-windows --config "$config_dir" 2>/dev/null | grep -qE 'system-monitor|audio-panel|network-panel|clock-panel|apps-panel'; then
+        sleep 0.25
+    fi
+    eww close system-monitor audio-panel network-panel clock-panel apps-panel --config "$config_dir" >/dev/null 2>&1 || true
+    hyprctl keyword unbind ', Escape' >/dev/null 2>&1 || true
+}
+
+bind_escape() {
+    command -v hyprctl >/dev/null 2>&1 || return 0
+    hyprctl keyword bind ", Escape, exec, $helper_dir/waybar-panel system close" >/dev/null 2>&1 || true
+}
+
+stop_daemon() {
+    local pid watcher
+    [ -r "$pidfile" ] || return 0
+    pid="$(<"$pidfile")"
+    if cmdline_matches_config "$pid"; then
+        close_all
+        kill "$pid"
+    else
+        printf 'refusing to stop an Eww process not owned by %s\n' "$config_dir" >&2
+    fi
+    rm -f "$pidfile"
+    if [ -r "$watcher_pidfile" ]; then
+        watcher="$(<"$watcher_pidfile")"
+        if [[ "$watcher" =~ ^[2-9][0-9]*$ ]] && [ -r "/proc/$watcher/cmdline" ] && tr '\0' ' ' < "/proc/$watcher/cmdline" | grep -Fq "$config_dir/scripts/theme-watch.py"; then
+            kill "$watcher" || true
+        fi
+        rm -f "$watcher_pidfile"
+    fi
+}
+
+case "$panel" in
+    system|audio|network|clock|apps) ;;
+    close-all)
+        [ -z "$action" ] || { printf 'usage: waybar-panel close-all\n' >&2; exit 2; }
+        close_all
+        exit 0
+        ;;
+    status)
+        [ -z "$action" ] || { printf 'usage: waybar-panel status\n' >&2; exit 2; }
+        daemon_running && printf 'running\n' || printf 'stopped\n'
+        exit 0
+        ;;
+    stop)
+        [ -z "$action" ] || { printf 'usage: waybar-panel stop\n' >&2; exit 2; }
+        stop_daemon
+        exit 0
+        ;;
+    *)
+        printf 'unknown panel: %s\n' "$panel" >&2
+        exit 2
+        ;;
+esac
+
+window_name="${panel}-panel"
+[ "$panel" = "system" ] && window_name="system-monitor"
+
+case "$action" in
+    waybar-toggle|toggle)
+        start_daemon
+        show_var="show-${panel}"
+        is_open=false
+        eww active-windows --config "$config_dir" 2>/dev/null | grep -q "$window_name" && is_open=true
+        close_all
+        if [ "$is_open" = false ]; then
+            eww open "$window_name" --config "$config_dir"
+            eww update "${show_var}=true" --config "$config_dir" >/dev/null 2>&1 || true
+            bind_escape
+        fi
+        ;;
+    open)
+        start_daemon
+        close_all
+        eww open "$window_name" --config "$config_dir"
+        eww update "show-${panel}=true" --config "$config_dir" >/dev/null 2>&1 || true
+        bind_escape
+        ;;
+    close)
+        close_all
+        ;;
+    btop)
+        command -v btop >/dev/null 2>&1 || { notify_error "btop is unavailable"; exit 1; }
+        command -v kitty >/dev/null 2>&1 || { notify_error "Kitty is unavailable; cannot open btop"; exit 1; }
+        kitty btop >/dev/null 2>&1 &
+        ;;
+    *)
+        printf 'usage: waybar-panel {system|audio|network|clock|apps} {waybar-toggle|toggle|open|close}; waybar-panel {close-all|status|stop}\n' >&2
+        exit 2
+        ;;
+esac

@@ -1,0 +1,7 @@
+# AUR packages for this group (installed via yay).
+mullvad-vpn-beta-bin
+mullvad-vpn-daemon-beta-bin
+mullvad-tui-bin
+mullvad-browser-bin
+floorp-bin
+thunderbird-beta-bin

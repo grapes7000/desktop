@@ -1,0 +1,39 @@
+#!/bin/bash
+# Show a one-time welcome notification per login session.
+set -euo pipefail
+
+STAMP="${XDG_RUNTIME_DIR:-/tmp}/hyprland-welcome-done"
+
+# Already shown this session
+[ -f "$STAMP" ] && exit 0
+
+# Opt-out via environment
+[ "${HYPR_NO_WELCOME:-}" = "1" ] && exit 0
+
+# Wait for dunst (bounded)
+for _ in 1 2 3 4 5; do
+    command -v dunstctl >/dev/null 2>&1 && dunstctl is-paused >/dev/null 2>&1 && break
+    sleep 1
+done
+
+ACTIVE_FILE="$HOME/.config/hypr/generated/.active"
+EFFECTS_FILE="$HOME/.config/theme-engine/effects.json"
+
+theme="(unknown)"
+[ -r "$ACTIVE_FILE" ] && theme=$(cat "$ACTIVE_FILE" | tr -d '\n')
+
+effects=""
+if [ -r "$EFFECTS_FILE" ]; then
+    shape=$(jq -r '.shape // empty' "$EFFECTS_FILE" 2>/dev/null)
+    texture=$(jq -r '.texture // empty' "$EFFECTS_FILE" 2>/dev/null)
+    anim=$(jq -r '.anim // empty' "$EFFECTS_FILE" 2>/dev/null)
+    parts=""
+    [ -n "$shape" ] && parts="$shape"
+    [ -n "$texture" ] && parts="${parts:+$parts · }$texture"
+    [ -n "$anim" ] && parts="${parts:+$parts · }$anim"
+    [ -n "$parts" ] && effects=" · Effects: $parts"
+fi
+
+notify-send -r 9999 "Hyprland is ready" "Theme: ${theme}${effects}" 2>/dev/null || true
+
+touch "$STAMP"

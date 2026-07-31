@@ -1,0 +1,6 @@
+# CachyOS-only additions for this group.
+# Override: use qemu-base + qemu-desktop instead of qemu-full
+qemu-base
+qemu-desktop
+virt-install
+virt-viewer

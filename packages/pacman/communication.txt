@@ -1,0 +1,1 @@
+# Graphical communication apps use Flatpak.

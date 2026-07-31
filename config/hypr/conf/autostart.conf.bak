@@ -1,0 +1,32 @@
+# Push the graphical env into systemd + dbus so user services (incl.
+# spice-vdagent, which is an X client and needs DISPLAY) work correctly.
+exec-once = dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP
+exec-once = systemctl --user import-environment DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP
+exec-once = systemctl --user restart spice-vdagent.service
+
+# Start the Secret Service backend (ksecretd) itself. In Plasma this is
+# autoloaded as a kded6 module; Hyprland has no kded6, so nothing ever
+# provides org.freedesktop.secrets and gh/git/browsers can't read saved
+# tokens even after the wallet is unlocked below.
+exec-once = /usr/bin/ksecretd
+
+# Unlock KWallet using the credentials PAM already cached at login.
+# Plasma pulls this in via its own systemd session units (plasma-kwin_wayland,
+# plasma-kcminit, etc.), which Hyprland never starts, so it has to be started
+# manually here or apps silently lose access to saved logins/tokens.
+exec-once = systemctl --user start plasma-kwallet-pam.service
+
+# polkit agent (GUI privilege prompts)
+exec-once = /usr/lib/polkit-kde-authentication-agent-1
+
+# desktop bits
+exec-once = bash ~/.config/waybar/launch.sh
+exec-once = bash ~/.config/eww/launch.sh
+exec-once = hyprpaper
+exec-once = dunst
+exec-once = hypridle
+exec-once = ~/.local/bin/theme homepage on
+
+# cursor + welcome
+exec-once = ~/.config/bin/apply-cursor
+exec-once = ~/.config/bin/session-welcome

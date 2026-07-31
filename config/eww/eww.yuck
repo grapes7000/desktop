@@ -1,0 +1,2 @@
+; The dashboard implementation lives alongside its supporting scripts.
+(include "homepage/eww.yuck")

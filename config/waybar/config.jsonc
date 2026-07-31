@@ -1,0 +1,157 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 34,
+  "margin-top": 6,
+  "margin-left": 10,
+  "margin-right": 10,
+  "spacing": 6,
+  "modules-left":   ["custom/ws1", "custom/ws2", "custom/ws3", "custom/ws4", "custom/ws5", "custom/ws6", "custom/ws7", "custom/ws8", "custom/ws9", "custom/ws10", "custom/running-apps", "custom/window-tracker"],
+  "modules-center": ["clock"],
+  "modules-right":  ["custom/vpn", "custom/sysstat", "pulseaudio", "network", "custom/notifications", "tray", "custom/power"],
+
+  "custom/vpn": {
+    "exec": "~/.config/waybar/scripts/vpn.sh",
+    "return-type": "json",
+    "interval": 5
+  },
+
+
+  "custom/ws1": {
+    "exec": "~/.config/waybar/scripts/workspaces.sh 1",
+    "return-type": "json",
+    "interval": 1,
+    "signal": 8,
+    "escape": false,
+    "on-click": "~/.config/waybar/scripts/ws-click.sh 1"
+  },
+  "custom/ws2": {
+    "exec": "~/.config/waybar/scripts/workspaces.sh 2",
+    "return-type": "json",
+    "interval": 1,
+    "signal": 8,
+    "escape": false,
+    "on-click": "~/.config/waybar/scripts/ws-click.sh 2"
+  },
+  "custom/ws3": {
+    "exec": "~/.config/waybar/scripts/workspaces.sh 3",
+    "return-type": "json",
+    "interval": 1,
+    "signal": 8,
+    "escape": false,
+    "on-click": "~/.config/waybar/scripts/ws-click.sh 3"
+  },
+  "custom/ws4": {
+    "exec": "~/.config/waybar/scripts/workspaces.sh 4",
+    "return-type": "json",
+    "interval": 1,
+    "signal": 8,
+    "escape": false,
+    "on-click": "~/.config/waybar/scripts/ws-click.sh 4"
+  },
+  "custom/ws5": {
+    "exec": "~/.config/waybar/scripts/workspaces.sh 5",
+    "return-type": "json",
+    "interval": 1,
+    "signal": 8,
+    "escape": false,
+    "on-click": "~/.config/waybar/scripts/ws-click.sh 5"
+  },
+  "custom/ws6": {
+    "exec": "~/.config/waybar/scripts/workspaces.sh 6",
+    "return-type": "json",
+    "interval": 1,
+    "signal": 8,
+    "escape": false,
+    "on-click": "~/.config/waybar/scripts/ws-click.sh 6"
+  },
+  "custom/ws7": {
+    "exec": "~/.config/waybar/scripts/workspaces.sh 7",
+    "return-type": "json",
+    "interval": 1,
+    "signal": 8,
+    "escape": false,
+    "on-click": "~/.config/waybar/scripts/ws-click.sh 7"
+  },
+  "custom/ws8": {
+    "exec": "~/.config/waybar/scripts/workspaces.sh 8",
+    "return-type": "json",
+    "interval": 1,
+    "signal": 8,
+    "escape": false,
+    "on-click": "~/.config/waybar/scripts/ws-click.sh 8"
+  },
+  "custom/ws9": {
+    "exec": "~/.config/waybar/scripts/workspaces.sh 9",
+    "return-type": "json",
+    "interval": 1,
+    "signal": 8,
+    "escape": false,
+    "on-click": "~/.config/waybar/scripts/ws-click.sh 9"
+  },
+  "custom/ws10": {
+    "exec": "~/.config/waybar/scripts/workspaces.sh 10",
+    "return-type": "json",
+    "interval": 1,
+    "signal": 8,
+    "escape": false,
+    "on-click": "~/.config/waybar/scripts/ws-click.sh 10"
+  },
+
+  "custom/window-tracker": {
+    "exec": "~/.config/waybar/scripts/window-tracker.sh",
+    "return-type": "text",
+    "max-length": 60
+  },
+
+  "custom/running-apps": {
+    "exec": "~/.config/waybar/scripts/running-apps.sh",
+    "return-type": "text",
+    "interval": 3,
+    "tooltip-format": "Running apps",
+    "on-click": "bash -lc '$HOME/.config/bin/waybar-panel apps waybar-toggle'"
+  },
+  "clock": {
+    "format": "  {:%a %d %b   %H:%M}",
+    "tooltip-format": "<tt>{calendar}</tt>",
+    "on-click": "bash -lc '$HOME/.config/bin/waybar-panel clock waybar-toggle'"
+  },
+  "custom/sysstat": {
+    "exec": "python3 ~/.config/waybar/scripts/sysstat.py",
+    "return-type": "json",
+    "interval": 4,
+    "on-click": "bash -lc '$HOME/.config/bin/waybar-panel system waybar-toggle'",
+    "on-click-right": "bash -lc '$HOME/.config/bin/waybar-panel system btop'"
+  },
+  "custom/notifications": {
+    "exec": "python3 ~/.config/waybar/scripts/notifications.py",
+    "return-type": "json",
+    "interval": 3,
+    "on-click": "~/.config/bin/notification-center",
+    "on-click-middle": "dunstctl history-pop",
+    "on-click-right": "dunstctl set-paused toggle"
+  },
+  "pulseaudio": {
+    "format": "{icon}  {volume}%",
+    "format-muted": "  muted",
+    "format-icons": { "default": ["", "", ""] },
+    "on-click": "bash -lc '$HOME/.config/bin/waybar-panel audio waybar-toggle'",
+    "on-click-right": "pavucontrol"
+  },
+  "network": {
+    "format-wifi": "󰤨",
+    "format-ethernet": "󰈀",
+    "format-disconnected": "󰤭",
+    "tooltip-format-wifi": "Wi-Fi: {essid}\\nIP: {ipaddr}",
+    "tooltip-format-ethernet": "Ethernet: {ifname}\\nIP: {ipaddr}",
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "bash -lc '$HOME/.config/bin/waybar-panel network waybar-toggle'"
+  },
+  "tray": { "spacing": 10 },
+  "custom/power": {
+    "format": "󰐥",
+    "tooltip": true,
+    "tooltip-format": "Power menu",
+    "on-click": "~/.config/bin/power-menu"
+  }
+}

@@ -1,0 +1,8 @@
+# CachyOS-only additions for this group.
+cpupower
+fprintd
+smartmontools
+hdparm
+hwinfo
+hwdetect
+upower

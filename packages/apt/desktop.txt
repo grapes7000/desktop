@@ -1,0 +1,8 @@
+xdg-utils
+xdg-user-dirs
+wl-clipboard
+xclip
+pavucontrol
+flameshot
+network-manager-gnome
+python3-pil

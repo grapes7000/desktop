@@ -1,0 +1,28 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+format = "$directory$git_branch$git_status$character"
+add_newline = false
+palette = "theme"
+
+[palettes.theme]
+bg = "#1d2021"
+fg = "#ebdbb2"
+accent = "#fabd2f"
+accent2 = "#fe8019"
+urgent = "#fb4934"
+
+[directory]
+style = "bold accent"
+truncation_length = 3
+truncate_to_repo = true
+
+[git_branch]
+symbol = " "
+style = "bold accent2"
+
+[git_status]
+style = "urgent"
+
+[character]
+success_symbol = "[❯](bold accent)"
+error_symbol = "[❯](bold urgent)"
+vimcmd_symbol = "[❮](bold accent2)"

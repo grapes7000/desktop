@@ -1,0 +1,19 @@
+#!/bin/bash
+# Toggle a persistent quick-notes terminal on special:notes.
+set -euo pipefail
+
+NOTES_FILE="${QUICK_NOTES_FILE:-$HOME/Documents/Notes/quick-notes.md}"
+CLASS="quick-notes"
+
+existing=$(hyprctl clients -j 2>/dev/null | jq -r ".[] | select(.class == \"$CLASS\") | .address" 2>/dev/null | head -1)
+
+if [ -n "$existing" ]; then
+    hyprctl dispatch togglespecialworkspace notes
+    exit 0
+fi
+
+mkdir -p "$(dirname "$NOTES_FILE")"
+
+kitty --class "$CLASS" --title "Quick Notes" -- \
+    nvim "$NOTES_FILE" &
+disown

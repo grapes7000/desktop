@@ -1,0 +1,4 @@
+# CachyOS-only additions for this group.
+firefox
+bitwarden
+spotify-launcher

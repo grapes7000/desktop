@@ -1,0 +1,1 @@
+# Starship and Oh My Zsh are installed by the integration script.

@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+# shortcuts — quick reference for all keybinds and commands.
+
+cat <<'EOF'
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    HYPRLAND KEYBINDS & COMMANDS                           ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+SUPER = Windows key
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ APPS & SYSTEM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Super + Return          Open terminal (kitty)
+  Super + Space           App launcher (wofi)
+  Super + B               Password manager (rofi-rbw)
+  Super + Shift + ?       Show this shortcuts (opens in pager)
+  Super + T               Theme picker (wofi)
+  Super + Shift + W       Workspace switcher (wofi)
+  Super + Shift + P       Power menu (wofi)
+  Super + Q               Close focused window
+  Super + Shift + E       Exit Hyprland (logout)
+  Print / Super + S       Screenshot (copies to clipboard)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ WINDOW FOCUS & MOVEMENT (vim-style: hjkl)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Super + H / L           Focus left / right
+  Super + K / J           Focus up / down
+  Super + Shift + H/J/K/L Move window in that direction
+  Super + Ctrl + H/J/K/L  Resize window by 40px
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ LAYOUT & WINDOWS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Super + F               Fullscreen (no borders)
+  Super + V               Toggle floating (drag with Super + left-click)
+  Super + X               Toggle split direction
+  Super + P               Pseudotile (window scales with tile group)
+  Super + Scroll           Switch workspaces
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ WORKSPACES (1-10)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Super + 1-9 / 0         Go to workspace 1-10
+  Super + Shift + 1-9 / 0 Move window to workspace 1-10
+  Super + Scroll / Mouse  Next / previous workspace
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ MEDIA & HARDWARE (Fn keys)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Volume Up / Down        Adjust volume by 5%
+  Mute                    Toggle mute
+  Play/Pause              Toggle media playback
+  Next / Previous         Next / previous track
+  Brightness Up / Down    Adjust brightness by 5%
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ MOUSE (drag = Super + mouse button)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Super + Left-click + drag   Move window
+  Super + Right-click + drag  Resize window
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                      TERMINAL COMMANDS                                    ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ THEME MANAGEMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  theme                   List all themes (marks active with *)
+  theme <name>            Switch theme instantly (hypr + waybar + kitty + starship)
+  theme starship          Regenerate Starship for the active theme
+  theme --list            Bare list of theme names (for scripting)
+  theme-new <name>        Create new theme (scaffold from catppuccin_mocha)
+  theme-new <name> --from nord  Create from a different base
+  theme-new <name> --edit Open editor after creating
+  theme-menu              Interactive wofi picker (also Super+T)
+  wallgen                 Regenerate all wallpapers from theme colors
+  wallgen <name>          Regenerate just one wallpaper
+  wallgen <name> --set    Regenerate one wallpaper and set it live
+  starship-config         Open the Starship prompt dashboard
+  shortcuts               Show this reference (you're reading it!)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ EXAMPLES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Switch to gruvbox and see the wallpaper + theme change instantly
+  $ theme gruvbox
+
+  # Create a new theme called "my-dark" starting from nord
+  $ theme-new my-dark --from nord --edit
+
+  # After editing, apply it
+  $ theme my-dark
+
+  # Regenerate wallpaper for your custom theme (if you tweaked colors)
+  $ wallgen my-dark
+
+  # Pick a theme with wofi
+  $ theme-menu
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                           TIPS                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+• Theme JSON lives in: ~/.config/hypr/themes/<name>.json
+  Edit the "roles" dict for colors, "style" dict for blur/shadow/gaps.
+
+• Wallpapers auto-generate and switch when you run `theme <name>`.
+
+• Config lives in: ~/.config/hypr/
+  - Main config: hyprland.conf
+  - Keybinds: conf/keybinds.conf (edit to customize)
+  - Colors/effects: generated/theme.conf (auto-written by `theme`)
+
+• Waybar (top bar) is in: ~/.config/waybar/
+
+• For persistent keybind changes, edit ~/.config/hypr/conf/keybinds.conf
+  Then reload with: hyprctl reload
+
+• Floating dialogs (pavucontrol, etc.) will float by default.
+  Mouse drag with Super still works inside them.
+
+EOF

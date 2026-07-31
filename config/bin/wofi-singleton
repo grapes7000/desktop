@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if pgrep -x wofi >/dev/null; then
+	pkill -x wofi
+	exit 0
+fi
+
+lock_file="${XDG_RUNTIME_DIR:-/tmp}/wofi-singleton.lock"
+exec 9>"$lock_file"
+flock -n 9 || exit 0
+
+hyprctl dispatch submap wofi >/dev/null
+wofi "$@"
+hyprctl dispatch submap reset >/dev/null

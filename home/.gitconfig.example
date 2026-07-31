@@ -1,0 +1,19 @@
+[user]
+    name = __GIT_NAME__
+    email = __GIT_EMAIL__
+[init]
+    defaultBranch = main
+[pull]
+    rebase = false
+[fetch]
+    prune = true
+[push]
+    autoSetupRemote = true
+[color]
+    ui = auto
+[core]
+    editor = nvim
+[alias]
+    st = status -sb
+    lg = log --oneline --graph --decorate --all
+    last = log -1 HEAD --stat

@@ -1,0 +1,227 @@
+(defpoll system-data :interval "2s" "$HOME/.config/eww-waybar-panels/scripts/system-stats.py")
+(defpoll audio-data :interval "2s" "$HOME/.config/eww-waybar-panels/scripts/panel-data.py audio")
+(defpoll network-data :interval "5s" "$HOME/.config/eww-waybar-panels/scripts/panel-data.py network")
+(defpoll clock-data :interval "1s" "$HOME/.config/eww-waybar-panels/scripts/panel-data.py clock")
+(defpoll apps-data :interval "3s" "$HOME/.config/eww-waybar-panels/scripts/panel-data.py apps")
+(deflisten cava-bars :initial "[0,0,0,0,0,0,0,0,0,0,0,0,0,0]" "$HOME/.config/eww-waybar-panels/scripts/audio-visualizer.sh")
+
+(defvar show-system false)
+(defvar show-audio false)
+(defvar show-network false)
+(defvar show-clock false)
+(defvar show-apps false)
+(defvar mic-expanded false)
+(defvar media-hover false)
+(defpoll pulse-tick :interval "1500ms" :initial "false"
+  "if [ -f /tmp/eww-pulse ]; then rm /tmp/eww-pulse; echo false; else touch /tmp/eww-pulse; echo true; fi")
+
+(defwidget close-button [] (button :class "panel-button close-button" :onclick "$HOME/.config/bin/waybar-panel close-all" "󰅖  Close"))
+(defwidget resource-meter [icon label percent detail warning critical]
+  (box :class {"resource-meter " + (critical ? "critical" : (warning ? "warning" : ""))}
+       :orientation "v" :space-evenly false :halign "center"
+    (circular-progress :class "meter-ring" :value percent :start-at 75 :thickness 5
+      (box :orientation "v" :space-evenly false :halign "center" :valign "center"
+        (label :class "meter-value" :text {"${percent}%"})
+        (label :class "meter-icon" :text icon)))
+    (label :class "meter-label" :text label)
+    (label :class "meter-detail" :text detail)))
+(defwidget stat-pill [icon text]
+  (box :class "stat-pill" :orientation "h" :space-evenly false
+    (label :class "stat-pill-icon" :text icon)
+    (label :class "stat-pill-text" :text text)))
+(defwidget app-icon [icon glyph]
+  (box :orientation "v" :space-evenly false :halign "center"
+    (image :visible {icon != ""} :class "app-icon"
+           :path {icon} :image-width 48 :image-height 48)
+    (box :visible {icon == ""} :class "app-glyph-box"
+      (label :class "app-glyph" :text glyph))))
+
+(defwidget system-monitor []
+  (overlay
+    (eventbox :onclick "$HOME/.config/bin/waybar-panel close-all" (box :hexpand true :vexpand true))
+    (box :halign "end" :valign "start"
+      (box
+        (box :width 440
+          (box :class "panel" :orientation "v" :space-evenly false
+            (label :class "panel-title" :halign "start" :text "SYSTEM")
+            (box :class "meter-row" :orientation "h" :space-evenly true
+              (resource-meter :icon "󰻠" :label "CPU" :percent {system-data.cpu.percent}
+                :detail {system-data.load} :warning {system-data.cpu.percent >= 75} :critical {system-data.cpu.percent >= 90})
+              (resource-meter :icon "󰘚" :label "MEM" :percent {system-data.memory.percent}
+                :detail {system-data.memory.detail} :warning {system-data.memory.percent >= 75} :critical {system-data.memory.percent >= 90})
+              (resource-meter :icon "󰋊" :label "DISK" :percent {system-data.disk.percent}
+                :detail {system-data.disk.detail} :warning {system-data.disk.percent >= 85} :critical {system-data.disk.percent >= 95}))
+            (box :class "pill-row" :orientation "h" :space-evenly false
+              (stat-pill :icon "󰥔" :text {system-data.uptime})
+              (stat-pill :icon "󰔏" :text {system-data.temperature.celsius < 0 ? "N/A" : (system-data.temperature.celsius + "°C")}))
+            (box :class "process-section" :orientation "v" :space-evenly false
+              (label :class "section-title" :halign "start" :text "TOP PROCESSES")
+              (for process in {system-data.processes}
+                (box :class "process-row" :orientation "h" :tooltip {"PID " + process.pid}
+                  (label :class "process-name" :halign "start" :hexpand true :limit-width 24 :text {process.name})
+                  (label :class "process-value" :text {process.cpu + "%"})
+                  (label :class "process-value" :text {process.memory + "%"}))))
+            (box :class "panel-actions" :orientation "h" :space-evenly false
+              (button :class "panel-button" :onclick "$HOME/.config/bin/waybar-panel system btop" "󰍉  btop")
+              (button :class "panel-button" :onclick "eww reload --config $HOME/.config/eww-waybar-panels" "󰑐  Refresh")
+              (close-button))))))))
+
+(defwidget cava-visualizer []
+  (box :class "cava-box" :orientation "h" :space-evenly true :valign "start" :hexpand true :vexpand true
+    (for bar in cava-bars
+      (box :valign "start" :hexpand true
+        (box :class "cava-bar-fill" :vexpand false
+             :style {"min-height: " + (bar > 2 ? bar * 1.5 : 2) + "px;"})))))
+
+(defwidget audio-panel []
+  (overlay
+    (eventbox :onclick "$HOME/.config/bin/waybar-panel close-all" (box :hexpand true :vexpand true))
+    (box :halign "end" :valign "start"
+      (box
+        (box :width 340
+          (box :class "panel" :orientation "v" :space-evenly false
+            ;; Master volume
+            (box :orientation "h" :space-evenly false
+              (button :class "audio-mute-btn" :onclick "$HOME/.config/eww-waybar-panels/scripts/panel-action.sh audio mute"
+                (label :text {audio-data.muted ? "󰖁" : (audio-data.volume > 50 ? "󰕾" : (audio-data.volume > 0 ? "󰖀" : "󰕿"))}))
+              (scale :class "audio-slider" :hexpand true :min 0 :max 100 :value {audio-data.volume}
+                     :onchange "$HOME/.config/eww-waybar-panels/scripts/panel-action.sh audio set-vol {}")
+              (label :class "audio-vol-label" :text {"${audio-data.volume}%"}))
+            ;; Now playing + visualizer
+            (eventbox :onhover "${EWW_CMD} update media-hover=true" :onhoverlost "${EWW_CMD} update media-hover=false"
+              (box :class "audio-media-card" :orientation "v" :space-evenly false
+                (overlay
+                  (cava-visualizer)
+                  (box :class "audio-media-content" :orientation "v" :space-evenly false :vexpand true
+                    (box :orientation "h" :space-evenly false
+                      (box :visible {audio-data.media.art == ""} :class "audio-media-art-fallback"
+                        (label :class "audio-media-art-icon" :text "󰎈"))
+                      (image :visible {audio-data.media.art != ""}
+                             :class {media-hover ? "audio-media-art audio-media-art-expanded" : "audio-media-art"}
+                             :path {audio-data.media.art != "" ? audio-data.media.art : "/dev/null"}
+                             :image-width 96 :image-height 96)
+                      (box :orientation "v" :space-evenly false :hexpand true
+                        (label :class "audio-media-status" :halign "start"
+                               :text {audio-data.media.visible ? (audio-data.media.playing ? "NOW PLAYING" : "PAUSED") : "NOTHING PLAYING"})
+                        (label :class "audio-media-title" :halign "start" :limit-width 26
+                               :text {audio-data.media.title})
+                        (label :visible {audio-data.media.artist != ""} :class "audio-media-artist" :halign "start" :limit-width 30
+                               :text {audio-data.media.artist})))
+                    (box :vexpand true)
+                    ;; Scrubber + controls slide in
+                    (revealer :reveal {media-hover || audio-data.media.visible} :transition "slidedown" :duration "150ms"
+                      (box :orientation "v" :space-evenly false
+                        (box :visible {audio-data.media.visible} :orientation "h" :space-evenly false :class "audio-scrubber-row"
+                          (label :class "audio-media-time" :text {audio-data.media.position})
+                          (progress :class "audio-scrubber" :hexpand true :value {audio-data.media.progress / 100})
+                          (label :class "audio-media-time" :text {audio-data.media.length}))
+                        (box :class "audio-media-controls" :orientation "h" :space-evenly true
+                          (button :class "audio-ctrl" :onclick "$HOME/.config/eww-waybar-panels/scripts/panel-action.sh audio previous" "󰒮")
+                          (button :class "audio-ctrl audio-ctrl-primary" :onclick "$HOME/.config/eww-waybar-panels/scripts/panel-action.sh audio play-pause"
+                            {audio-data.media.playing ? "󰏤" : "󰐊"})
+                          (button :class "audio-ctrl" :onclick "$HOME/.config/eww-waybar-panels/scripts/panel-action.sh audio next" "󰒭"))))))))
+            ;; Per-app volume (slides in when apps exist)
+            (revealer :reveal {arraylength(audio-data.apps) > 0} :transition "slidedown" :duration "150ms"
+              (box :class "audio-section" :orientation "v" :space-evenly false
+                (label :class "audio-section-title" :halign "start" :text "APPLICATIONS")
+                (for app in {audio-data.apps}
+                  (box :class "audio-app-row" :orientation "h" :space-evenly false
+                    (label :class "audio-app-name" :limit-width 14 :text {app.name})
+                    (scale :class "audio-app-slider" :hexpand true :min 0 :max 150 :value {app.volume}
+                           :onchange {"$HOME/.config/eww-waybar-panels/scripts/panel-action.sh audio set-app-vol " + app.index + " {}"})
+                    (label :class "audio-app-vol" :text {"${app.volume}%"})))))
+            ;; Microphone (expandable)
+            (eventbox :onclick "${EWW_CMD} update mic-expanded=${!mic-expanded}"
+              (box :class "audio-mic-header" :orientation "h" :space-evenly false
+                (label :class {audio-data.mic_muted ? "audio-mic-icon" : ("audio-mic-icon " + (pulse-tick ? "pulse-bright" : "pulse-dim"))}
+                       :text {audio-data.mic_muted ? "󰍭" : "󰍬"})
+                (label :class "audio-section-title" :hexpand true :halign "start" :text "MICROPHONE")
+                (label :class "audio-mic-chevron" :text {mic-expanded ? "󰅃" : "󰅀"})))
+            (revealer :reveal mic-expanded :transition "slidedown" :duration "200ms"
+              (box :class "audio-mic-body" :orientation "h" :space-evenly false
+                (button :class "audio-mute-btn" :onclick "$HOME/.config/eww-waybar-panels/scripts/panel-action.sh audio mic-mute"
+                  (label :text {audio-data.mic_muted ? "󰍭" : "󰍬"}))
+                (scale :class "audio-slider" :hexpand true :min 0 :max 100 :value {audio-data.mic_volume}
+                       :onchange "pamixer --default-source --set-volume {}")
+                (label :class "audio-vol-label" :text {"${audio-data.mic_volume}%"})))))))))
+
+(defwidget network-panel []
+  (overlay
+    (eventbox :onclick "$HOME/.config/bin/waybar-panel close-all" (box :hexpand true :vexpand true))
+    (box :halign "end" :valign "start"
+      (box
+        (box :width 380
+          (box :class "panel" :orientation "v" :space-evenly false
+            (label :class "panel-title" :halign "start" :text "NETWORK")
+            ;; Wi-Fi / Ethernet card
+            (box :class {network-data.wifi.connected ? "net-card" : "net-card net-dim"} :orientation "v" :space-evenly false
+              (box :orientation "h" :space-evenly false
+                (label :class "net-card-icon" :text {network-data.wifi.is_wifi ? "󰤨" : "󰈀"})
+                (box :orientation "v" :space-evenly false :hexpand true
+                  (label :class "net-card-title" :halign "start" :text {network-data.wifi.ssid != "" ? network-data.wifi.ssid : "Disconnected"})
+                  (label :class "net-card-sub" :halign "start" :text {network-data.wifi.connected ? (network-data.wifi.ipv4 + (network-data.wifi.security != "" ? ("  " + network-data.wifi.security) : "")) : "No network"}))
+                (box :visible {network-data.wifi.connected && network-data.wifi.is_wifi} :orientation "v" :space-evenly false :valign "center"
+                  (circular-progress :class "net-signal-ring" :value {network-data.wifi.signal} :start-at 75 :thickness 5
+                    (label :class "net-signal-val" :text {"${network-data.wifi.signal}%"}))))
+              (revealer :reveal {network-data.wifi.connected} :transition "slidedown" :duration "150ms"
+                (box :class "net-transfer" :orientation "h" :space-evenly true
+                  (label :class "net-transfer-item" :text {"󰩟 " + network-data.wifi.down})
+                  (label :class "net-transfer-item" :text {"󰩠 " + network-data.wifi.up}))))
+            ;; Mullvad card
+            (box :class {network-data.mullvad.connected ? "net-card net-mullvad-on" : "net-card net-mullvad-off"} :orientation "v" :space-evenly false
+              (box :orientation "h" :space-evenly false
+                (label :class "net-card-icon" :text "󰦝")
+                (box :orientation "v" :space-evenly false :hexpand true
+                  (label :class "net-card-title" :halign "start" :text "Mullvad VPN")
+                  (label :class "net-card-sub" :halign "start" :text {network-data.mullvad.installed ? network-data.mullvad.status : "Not installed"}))
+                (label :class {network-data.mullvad.connected ? ("net-status-pill net-pill-on " + (pulse-tick ? "pulse-bright" : "pulse-dim")) : "net-status-pill net-pill-off"}
+                       :text {network-data.mullvad.connected ? "CONNECTED" : "OFF"}))
+              (revealer :reveal {network-data.mullvad.connected && network-data.mullvad.location != ""} :transition "slidedown" :duration "150ms"
+                (label :class "net-card-sub" :halign "start" :text {network-data.mullvad.location}))
+              (revealer :reveal {network-data.mullvad.installed && !network-data.mullvad.connected} :transition "slidedown" :duration "150ms"
+                (box :orientation "h" :space-evenly false :halign "start"
+                  (button :class "panel-button" :onclick "mullvad connect" "󰌘  Connect"))))
+            ;; Tailscale card
+            (box :class {network-data.tailscale.connected ? "net-card" : "net-card net-dim"} :orientation "v" :space-evenly false
+              (box :orientation "h" :space-evenly false
+                (label :class "net-card-icon" :text "󰛳")
+                (box :orientation "v" :space-evenly false :hexpand true
+                  (label :class "net-card-title" :halign "start" :text "Tailscale")
+                  (label :class "net-card-sub" :halign "start" :text {network-data.tailscale.installed ? (network-data.tailscale.connected ? network-data.tailscale.ip : "Disconnected") : "Not installed"}))
+                (label :visible {network-data.tailscale.connected}
+                       :class "net-card-sub" :halign "end" :text {"${network-data.tailscale.peers} peers"})))))))))
+
+(defwidget clock-panel []
+  (overlay
+    (eventbox :onclick "$HOME/.config/bin/waybar-panel close-all" (box :hexpand true :vexpand true))
+    (box :halign "center" :valign "start"
+      (box
+        (box :width 320
+          (box :class "panel" :orientation "v" :space-evenly false
+            (label :class "clock-time" :halign "center" :text {clock-data.time})
+            (box :class "clock-divider")
+            (label :class "panel-line" :halign "center" :text {clock-data.date})
+            (label :class "panel-line" :halign "center" :text {clock-data.timezone})
+            (label :class "calendar" :halign "center" :text {clock-data.calendar})))))))
+
+(defwidget apps-panel []
+  (overlay
+    (eventbox :onclick "$HOME/.config/bin/waybar-panel close-all" (box :hexpand true :vexpand true))
+    (box :halign "start" :valign "start"
+      (box
+        (box :class "panel" :orientation "v" :space-evenly false
+          (label :class "panel-title" :halign "start" :text "APPS")
+          (box :class "apps-grid" :orientation "h" :space-evenly false :wrap true
+            (for app in {apps-data.apps}
+              (eventbox :onclick {"hyprctl dispatch focuswindow address:" + app.address}
+                        :onmiddleclick {"hyprctl dispatch closewindow address:" + app.address}
+                        :tooltip {app.name + ": " + app.subtitle}
+                (box :class {app.active ? "app-cell app-cell-active" : "app-cell"} :orientation "v" :space-evenly false
+                  (app-icon :icon {app.icon} :glyph {app.glyph})
+                  (label :class "app-ws-badge" :halign "center" :text {app.workspace}))))))))))
+
+(defwindow system-monitor :monitor 0 :stacking "overlay" :exclusive false :focusable true :geometry (geometry :x "0px" :y "0px" :width "100%" :height "100%" :anchor "top right") (system-monitor))
+(defwindow audio-panel :monitor 0 :stacking "overlay" :exclusive false :focusable true :geometry (geometry :x "0px" :y "0px" :width "100%" :height "100%" :anchor "top right") (audio-panel))
+(defwindow network-panel :monitor 0 :stacking "overlay" :exclusive false :focusable true :geometry (geometry :x "0px" :y "0px" :width "100%" :height "100%" :anchor "top right") (network-panel))
+(defwindow clock-panel :monitor 0 :stacking "overlay" :exclusive false :focusable true :geometry (geometry :x "0px" :y "0px" :width "100%" :height "100%" :anchor "top center") (clock-panel))
+(defwindow apps-panel :monitor 0 :stacking "overlay" :exclusive false :focusable true :geometry (geometry :x "0px" :y "0px" :width "100%" :height "100%" :anchor "top left") (apps-panel))

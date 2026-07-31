@@ -1,0 +1,87 @@
+@import "generated/theme.css";
+@import "generated/component.css";
+
+* {
+  font-family: "JetBrainsMono Nerd Font";
+  font-size: 13px;
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+  transition: all 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+window#waybar { background: transparent; color: @text; }
+.modules-left, .modules-center, .modules-right { }
+
+/* Module pill base — matte surface with consistent spacing */
+#custom-ws1, #custom-ws2, #custom-ws3, #custom-ws4, #custom-ws5,
+#custom-ws6, #custom-ws7, #custom-ws8, #custom-ws9, #custom-ws10,
+#clock, #custom-sysstat, #pulseaudio, #network, #tray,
+#custom-window-tracker, #custom-vpn, #custom-notifications, #custom-power {
+  background: alpha(@surface_0, 0.6);
+  min-height: 28px;
+  padding: 0 10px;
+  margin: 2px 2px;
+  border-radius: 8px;
+  border: 1px solid alpha(@border_subtle, 0.3);
+}
+
+/* Workspace tabs */
+#custom-ws1, #custom-ws2, #custom-ws3, #custom-ws4, #custom-ws5,
+#custom-ws6, #custom-ws7, #custom-ws8, #custom-ws9, #custom-ws10 {
+  color: @text_dim;
+  font-size: 12px;
+  min-height: 28px;
+  padding: 0 6px;
+  background: transparent;
+  border: none;
+}
+#custom-ws1:hover, #custom-ws2:hover, #custom-ws3:hover, #custom-ws4:hover, #custom-ws5:hover,
+#custom-ws6:hover, #custom-ws7:hover, #custom-ws8:hover, #custom-ws9:hover, #custom-ws10:hover { background: alpha(@hover, 0.5); }
+#custom-ws1.active, #custom-ws2.active, #custom-ws3.active, #custom-ws4.active, #custom-ws5.active,
+#custom-ws6.active, #custom-ws7.active, #custom-ws8.active, #custom-ws9.active, #custom-ws10.active {
+  color: @accent;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 0 10px;
+  background: alpha(@selected, 0.15);
+  border: 1px solid alpha(@accent, 0.3);
+}
+
+/* Clock */
+#clock { color: @accent; }
+/* System monitor */
+#custom-sysstat { color: @text; }
+#custom-sysstat.warning { color: @warning; }
+#custom-sysstat.critical { color: @urgent; background: alpha(@urgent, 0.15); }
+/* Audio */
+#pulseaudio { color: @text; }
+#pulseaudio.muted { color: @disabled; }
+/* Network */
+#network { color: @text_dim; }
+#network.disconnected { color: @urgent; }
+/* Battery */
+#battery { color: @text; }
+#battery.warning { color: @warning; }
+#battery.critical { color: @urgent; background: alpha(@urgent, 0.15); }
+#battery.charging { color: @success; }
+#custom-power { color: @urgent; }
+/* VPN */
+#custom-vpn { background: transparent; border-color: transparent; }
+#custom-vpn.protected { color: @success; }
+#custom-vpn.exposed { color: @urgent; }
+/* Notifications */
+#custom-notifications { color: @text_dim; }
+#custom-notifications.waiting { color: @accent; }
+#custom-notifications.paused { color: @warning; }
+/* Window tracker and running apps */
+#custom-window-tracker { color: @accent; }
+#custom-running-apps { color: @accent2; letter-spacing: 2px; }
+
+/* Shared interaction states */
+#clock:hover, #custom-sysstat:hover, #pulseaudio:hover, #network:hover,
+#battery:hover, #custom-notifications:hover, #custom-running-apps:hover,
+#custom-window-tracker:hover {
+  background: alpha(@hover, 0.6);
+  border-color: alpha(@border_strong, 0.4);
+}
