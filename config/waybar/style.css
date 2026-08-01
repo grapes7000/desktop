@@ -76,7 +76,11 @@ window#waybar { background: transparent; color: @text; }
 #custom-notifications.paused { color: @warning; }
 /* Window tracker and running apps */
 #custom-window-tracker { color: @accent; }
-#custom-running-apps { color: @accent2; letter-spacing: 2px; }
+#custom-running-apps {
+  color: @text;
+  letter-spacing: 2px;
+  text-shadow: 0 1px 2px alpha(@bg, 0.80);
+}
 
 /* Shared interaction states */
 #clock:hover, #custom-sysstat:hover, #pulseaudio:hover, #network:hover,

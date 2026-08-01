@@ -15,7 +15,7 @@
 (defpoll pulse-tick :interval "1500ms" :initial "false"
   "if [ -f /tmp/eww-pulse ]; then rm /tmp/eww-pulse; echo false; else touch /tmp/eww-pulse; echo true; fi")
 
-(defwidget close-button [] (button :class "panel-button close-button" :onclick "$HOME/.config/bin/waybar-panel close-all" "󰅖  Close"))
+(defwidget close-button [] (button :class "panel-button close-button" :onclick "${EWW_CMD} close system-monitor audio-panel network-panel clock-panel apps-panel" "󰅖  Close"))
 (defwidget resource-meter [icon label percent detail warning critical]
   (box :class {"resource-meter " + (critical ? "critical" : (warning ? "warning" : ""))}
        :orientation "v" :space-evenly false :halign "center"
@@ -35,10 +35,14 @@
            :path {icon} :image-width 48 :image-height 48)
     (box :visible {icon == ""} :class "app-glyph-box"
       (label :class "app-glyph" :text glyph))))
+(defwidget popup-layer []
+  (eventbox :onclick "${EWW_CMD} close system-monitor audio-panel network-panel clock-panel apps-panel"
+    (overlay
+      (box :hexpand true :vexpand true)
+      (box (children)))))
 
 (defwidget system-monitor []
-  (overlay
-    (eventbox :onclick "$HOME/.config/bin/waybar-panel close-all" (box :hexpand true :vexpand true))
+  (popup-layer
     (box :halign "end" :valign "start"
       (box
         (box :width 440
@@ -74,8 +78,7 @@
              :style {"min-height: " + (bar > 2 ? bar * 1.5 : 2) + "px;"})))))
 
 (defwidget audio-panel []
-  (overlay
-    (eventbox :onclick "$HOME/.config/bin/waybar-panel close-all" (box :hexpand true :vexpand true))
+  (popup-layer
     (box :halign "end" :valign "start"
       (box
         (box :width 340
@@ -146,8 +149,7 @@
                 (label :class "audio-vol-label" :text {"${audio-data.mic_volume}%"})))))))))
 
 (defwidget network-panel []
-  (overlay
-    (eventbox :onclick "$HOME/.config/bin/waybar-panel close-all" (box :hexpand true :vexpand true))
+  (popup-layer
     (box :halign "end" :valign "start"
       (box
         (box :width 380
@@ -192,8 +194,7 @@
                        :class "net-card-sub" :halign "end" :text {"${network-data.tailscale.peers} peers"})))))))))
 
 (defwidget clock-panel []
-  (overlay
-    (eventbox :onclick "$HOME/.config/bin/waybar-panel close-all" (box :hexpand true :vexpand true))
+  (popup-layer
     (box :halign "center" :valign "start"
       (box
         (box :width 320
@@ -205,8 +206,7 @@
             (label :class "calendar" :halign "center" :text {clock-data.calendar})))))))
 
 (defwidget apps-panel []
-  (overlay
-    (eventbox :onclick "$HOME/.config/bin/waybar-panel close-all" (box :hexpand true :vexpand true))
+  (popup-layer
     (box :halign "start" :valign "start"
       (box
         (box :class "panel" :orientation "v" :space-evenly false
